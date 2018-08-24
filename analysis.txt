@@ -1,0 +1,45 @@
+Test one:  A single large number and large multiple.
+
+As expected, nub performs better here due to basically not having to do anything other than some simple multiplication.
+
+*SumOfMultiples SumOfMultiples> sumOfMultiples [100000] 10000000
+495000000
+(6.03 secs, 3,920,264,384 bytes)
+*SumOfMultiples SumOfMultiples> sumOfMultiplesNub [100000] 10000000
+495000000
+(0.01 secs, 291,328 bytes)
+
+
+Test two: Small n and many multiples.
+
+This time nub falls well behind [1..n].  
+
+*SumOfMultiples SumOfMultiples> sumOfMultiples [3,5,6,9,11,18,21,34,26,44,100,132,400,444,607,1012] 100000
+2738480462
+(0.30 secs, 154,287,264 bytes)
+*SumOfMultiples SumOfMultiples> sumOfMultiplesNub [3,5,6,9,11,18,21,34,26,44,100,132,400,444,607,1012] 100000
+2738480462
+(65.66 secs, 34,599,272 bytes)
+
+Here's the same test with nubOrd:
+*SumOfMultiples SumOfMultiples> sumOfMultiplesNubOrd [3,5,6,9,11,18,21,34,26,44,100,132,400,444,607,1012] 100000
+2738480462
+(0.19 secs, 93,055,968 bytes)
+
+Quite impressive numbers.
+
+
+Test three:  Lets give a large n and 4 dispersed multiples.
+
+It seems this an area where the two algorithms are similar.
+Note that nubOrd blows them both out of the water 
+
+*SumOfMultiples SumOfMultiples> sumOfMultiples [1000, 222221, 435, 34567] 10000000
+166045715080
+(14.55 secs, 8,237,963,568 bytes)
+*SumOfMultiples SumOfMultiples> sumOfMultiplesNub [1000, 222221, 435, 34567] 10000000
+166045715080
+(13.61 secs, 13,587,280 bytes)
+*SumOfMultiples SumOfMultiples> sumOfMultiplesNubOrd [1000, 222221, 435, 34567] 10000000
+166045715080
+(0.09 secs, 46,115,368 bytes)
