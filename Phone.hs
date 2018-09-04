@@ -5,21 +5,15 @@ import Data.Char
 number :: String -> Maybe String
 number = vCheckPosition 0 . vCheckPosition 3 . vCountryCode . digitsOnly
 
-digitsOnly :: String -> Maybe String
-digitsOnly = Just . filter isNumber
+digitsOnly :: String -> String
+digitsOnly = filter isNumber
 
-vCountryCode :: Maybe String -> Maybe String
-vCountryCode Nothing = Nothing
-vCountryCode ( Just n )  | ( length n == 11 ) && head n == '1' = Just n
-                         | length n == 10 = Just n
-                         | otherwise = Nothing
+vCountryCode :: String -> Maybe String
+vCountryCode n | ( length n == 11 ) && head n == '1' = Just $ tail n
+               | length n == 10 = Just n
+               | otherwise = Nothing
 
-type Position = Int
-
-vCheckPosition :: Position -> Maybe String -> Maybe String
+vCheckPosition :: Int -> Maybe String -> Maybe String
 vCheckPosition _ Nothing = Nothing
-vCheckPosition pos (Just n) | (length n == 11) && (twoToNine (n!!(succ pos))) = Just n
-                       | (length n == 10) && twoToNine (n!!pos) = Just n
-                       | otherwise = Nothing
-
-twoToNine = (`elem` ['2'..'9'])
+vCheckPosition pos (Just n) | (n!!pos) `elem` ['2'..'9'] = Just n
+                            | otherwise = Nothing

@@ -2,7 +2,6 @@ module RunLength (decode, encode) where
 
 import Data.List
 import Data.Char
-import Text.Read
 
 data Token = Single Char | Multiple Int Char
   deriving (Eq, Show)
@@ -10,39 +9,22 @@ data Token = Single Char | Multiple Int Char
 -- ENCODE section
 
 encode :: String -> String
-encode = encodeTokens . map makeTokenEncode . group
-
-makeTokenEncode :: String -> Token
-makeTokenEncode xs | length xs == 1 = Single ( head xs )
-                   | otherwise = Multiple (length xs) (head xs)
-
-encodeTokens :: [Token] -> String
-encodeTokens = concatMap go
+encode = concatMap go . group
   where
-    go (Single c) = [c]
-    go (Multiple n c) = show n ++ [c]
+    go xs | length xs < 2 = xs
+          | otherwise = show (length xs) <> [head xs]
 
 -- DECODE section
 
 decode :: String -> String
-decode = concatMap decodeToken . decodeTokens
-
-decodeToken :: Token -> String
-decodeToken (Single c) = [c]
-decodeToken (Multiple n c) = replicate n c
-
-decodeTokens :: String -> [Token]
-decodeTokens = go []
+decode = concatMap go . seperate
   where
-    go :: [Token] -> String -> [Token]
-    go tokens [] = tokens
-    go tokens xs = go ( tokens ++ [ makeTokenDecode xs ] ) ( rest xs )
-    rest = tail . dropWhile isNumber
+    go (c, "") = [c]
+    go (c, num) = replicate (read num :: Int) c
 
-makeTokenDecode :: String -> Token
-makeTokenDecode xs =
-  let count = readMaybe (takeWhile isNumber xs)
-      character = head (dropWhile isNumber xs)
-  in case count of
-      Nothing -> Single character
-      Just n -> Multiple n character
+seperate :: String -> [(Char, String)]
+seperate = init . foldr go [(' ', "")]
+  where
+    go x xs@((c,digits):ys)
+      | isDigit x = (c, x:digits):ys
+      | otherwise = (x, ""):xs
